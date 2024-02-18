@@ -1,6 +1,6 @@
 import os
-if 'PYOPENGL_PLATFORM' not in os.environ:
-    os.environ['PYOPENGL_PLATFORM'] = 'egl'
+# if 'PYOPENGL_PLATFORM' not in os.environ:
+#     os.environ['PYOPENGL_PLATFORM'] = 'egl'
 import torch
 from torchvision.utils import make_grid
 import numpy as np
