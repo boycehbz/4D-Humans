@@ -15,6 +15,9 @@ from tqdm import tqdm
 from hmr2.configs import CACHE_DIR_4DHUMANS
 from hmr2.models import HMR2, download_models, load_hmr2, DEFAULT_CHECKPOINT
 
+import sys
+sys.argv = ['', '--dataset=H36M-VAL-P2']
+
 def main():
     parser = argparse.ArgumentParser(description='Evaluate trained models')
     parser.add_argument('--checkpoint', type=str, default=DEFAULT_CHECKPOINT, help='Path to pretrained model checkpoint')

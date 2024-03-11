@@ -13,6 +13,26 @@ from hmr2.utils.renderer import Renderer, cam_crop_to_full
 
 LIGHT_BLUE=(0.65098039,  0.74117647,  0.85882353)
 
+import sys
+sys.argv = ['', '--img_folder=example_data/images', '--out_folder=demo_out', '--batch_size=48', '--side_view', '--save_mesh', '--full_frame']
+
+def vis_img(name, im):
+    ratiox = 800/int(im.shape[0])
+    ratioy = 800/int(im.shape[1])
+    if ratiox < ratioy:
+        ratio = ratiox
+    else:
+        ratio = ratioy
+
+    cv2.namedWindow(name,0)
+    cv2.resizeWindow(name,int(im.shape[1]*ratio),int(im.shape[0]*ratio))
+    #cv2.moveWindow(name,0,0)
+    if im.max() > 1:
+        im = im/255.
+    cv2.imshow(name,im)
+    if name != 'mask':
+        cv2.waitKey()
+
 def main():
     parser = argparse.ArgumentParser(description='HMR2 demo code')
     parser.add_argument('--checkpoint', type=str, default=DEFAULT_CHECKPOINT, help='Path to pretrained model checkpoint')
@@ -28,7 +48,7 @@ def main():
 
     # Download and load checkpoints
     download_models(CACHE_DIR_4DHUMANS)
-    model, model_cfg = load_hmr2(args.checkpoint)
+    model, model_cfg = load_hmr2('/media/buzhenhuang/SSD2/BuzhenHuang_Programs/4D-Humans/logs/train/runs/hmr2/checkpoints/epoch=6-step=855700.ckpt') # (args.checkpoint) #
 
     # Setup HMR2.0 model
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -79,8 +99,9 @@ def main():
             box_center = batch["box_center"].float()
             box_size = batch["box_size"].float()
             img_size = batch["img_size"].float()
-            scaled_focal_length = model_cfg.EXTRA.FOCAL_LENGTH / model_cfg.MODEL.IMAGE_SIZE * img_size.max()
-            pred_cam_t_full = cam_crop_to_full(pred_cam, box_center, box_size, img_size, scaled_focal_length).detach().cpu().numpy()
+            # scaled_focal_length = model_cfg.EXTRA.FOCAL_LENGTH / model_cfg.MODEL.IMAGE_SIZE * img_size.max()
+            # pred_cam_t_full = cam_crop_to_full(pred_cam, box_center, box_size, img_size, scaled_focal_length).detach().cpu().numpy()
+            pred_cam_t_full = out['pred_cam_t'].detach().cpu().numpy()
 
             # Render the result
             batch_size = batch['img'].shape[0]
@@ -95,9 +116,13 @@ def main():
                 regression_img = renderer(out['pred_vertices'][n].detach().cpu().numpy(),
                                         out['pred_cam_t'][n].detach().cpu().numpy(),
                                         batch['img'][n],
+                                        full_frame=True,
+                                        imgname=str(img_path),
                                         mesh_base_color=LIGHT_BLUE,
                                         scene_bg_color=(1, 1, 1),
                                         )
+
+                vis_img('img', regression_img)
 
                 final_img = np.concatenate([input_patch, regression_img], axis=1)
 

@@ -524,7 +524,7 @@ def smpl_param_processing(smpl_params: Dict, has_smpl_params: Dict, rot: float, 
 
 
 
-def get_example(img_path, center_x, center_y,
+def get_example(img_path: str, center_x: float, center_y: float,
                 width: float, height: float,
                 keypoints_2d: np.array, keypoints_3d: np.array,
                 smpl_params: Dict, has_smpl_params: Dict,

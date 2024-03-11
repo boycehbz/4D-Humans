@@ -32,6 +32,8 @@ signal.signal(signal.SIGUSR1, signal.SIG_DFL)
 
 log = get_pylogger(__name__)
 
+import sys
+sys.argv = ['', 'exp_name=hmr2', 'data=mix_all', 'experiment=hmr_vit_transformer', 'trainer=gpu', 'launcher=local']
 
 @pl.utilities.rank_zero.rank_zero_only
 def save_configs(model_cfg: CfgNode, dataset_cfg: CfgNode, rootdir: str):

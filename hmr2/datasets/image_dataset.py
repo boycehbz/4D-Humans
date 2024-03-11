@@ -13,7 +13,7 @@ from .smplh_prob_filter import poses_check_probable, load_amass_hist_smooth
 
 def expand(s):
     return os.path.expanduser(os.path.expandvars(s))
-def expand_urls(urls):
+def expand_urls(urls: str):
     if isinstance(urls, str):
         urls = [urls]
     urls = [u for url in urls for u in braceexpand.braceexpand(expand(url))]
@@ -207,7 +207,7 @@ class ImageDataset(Dataset):
 
 
     @staticmethod
-    def load_tars_as_webdataset(cfg: CfgNode, urls, train: bool,
+    def load_tars_as_webdataset(cfg: CfgNode, urls: str, train: bool,
             resampled=False,
             epoch_size=None,
             cache_dir=None,
@@ -396,6 +396,8 @@ class ImageDataset(Dataset):
         if bbox_size < 1:
             breakpoint()
 
+        
+
 
         smpl_params = {'global_orient': body_pose[:3],
                     'body_pose': body_pose[3:],
@@ -433,6 +435,10 @@ class ImageDataset(Dataset):
             mask_patch = np.ones_like(mask_patch)
 
         item = {}
+
+        item["img_h"] = image.shape[0]
+        item["img_w"] = image.shape[1]
+        item["focal_length"] = (image.shape[0]**2 + image.shape[1]**2)**0.5
 
         item['img'] = img_patch
         item['mask'] = mask_patch

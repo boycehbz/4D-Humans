@@ -82,6 +82,12 @@ class ViTDetDataset(torch.utils.data.Dataset):
             'img': img_patch,
             'personid': int(self.personid[idx]),
         }
+
+        item["img_h"] = cvimg.shape[0]
+        item["img_w"] = cvimg.shape[1]
+        item["focal_length"] = (cvimg.shape[0]**2 + cvimg.shape[1]**2)**0.5
+        item['_scale'] = scale
+
         item['box_center'] = self.center[idx].copy()
         item['box_size'] = bbox_size
         item['img_size'] = 1.0 * np.array([cvimg.shape[1], cvimg.shape[0]])
